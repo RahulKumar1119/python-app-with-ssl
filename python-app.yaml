@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vote-back
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vote-back
+  template:
+    metadata:
+      labels:
+        app: vote-back
+    spec:
+      containers:
+      - name: vote-back
+        image: bitnami/redis:6.0.8
+        env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        ports:
+        - containerPort: 6379
+          name: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vote-back
+spec:
+  ports:
+  - port: 6379
+  selector:
+    app: vote-back
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vote-front
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vote-front
+  template:
+    metadata:
+      labels:
+        app: vote-front
+    spec:
+      containers:
+      - name: vote-front
+        image: sampleregistry77.azurecr.io/myakscluster:8c368e303b2621956808a2bf455d9e1cbafdb94f
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        env:
+        - name: REDIS
+          value: "vote-back"
+          
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vote-front
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+  selector:
+    app: vote-front

@@ -5,7 +5,7 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: rahulgoogd66@gmail.com
+    email: rahulprem512@gmail.com
     privateKeySecretRef:
       name: letsencrypt
     solvers:
